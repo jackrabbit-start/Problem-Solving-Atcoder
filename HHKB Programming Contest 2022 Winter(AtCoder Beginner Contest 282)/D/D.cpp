@@ -8,9 +8,6 @@ using namespace std;
 
 vector<long long int> graph[300000];
 long long int visited[300000];
-vector<pair<long long int, long long int>> v;
-long long int counte[300000][2];
-long long int DP[300000][2];
 long long n_graph;
 
 long long int N, M;
@@ -42,17 +39,6 @@ void DFS(long long int now){
         }
     }
 }
-void DFS2(long long int now){
-    if(now == n_graph){
-        ans = max(ans, (DP[now-1][0]*(N-DP[now-1][0])));
-        return;
-    }
-    DP[now][0] = DP[now-1][0] + v[now].first;
-    DFS2(now+1);
-    DP[now][0] = DP[now-1][0] + v[now].second;
-    DFS2(now+1);
-}
-
 
 int main(){
     ios_base :: sync_with_stdio(false); 
@@ -74,33 +60,16 @@ int main(){
         if(!visited[i]){
             visited[i] = 1;
             DFS(i);
-            counte[n_graph][0] = black;
-            counte[n_graph][1] = white;
-            if(black>white) v.push_back(make_pair(black,white));
-            else v.push_back(make_pair(white,black));
-            n_graph++;
+            ans += black * (N-black);
+            ans += white * (N-white);
         }
     }
-    sort(v.begin(),v.end(), greater<>());
     if(check == 0) {cout << "0\n";}
     else{
-        
-        DP[0][0] = v[0].first;
-        DP[0][1] = v[0].second;
-        for(long long int i = 1 ; i < n_graph; i++){
-            if(((DP[i-1][0]+v[i].first) * (DP[i-1][1]+v[i].second)) > ((DP[i-1][0]+v[i].second)*(DP[i-1][1]+v[i].first))){
-                DP[i][0] = DP[i-1][0] + v[i].first;
-                DP[i][1] = DP[i-1][1] + v[i].second;
-            }
-            else{
-                DP[i][0] = DP[i-1][0] + v[i].second;
-                DP[i][1] = DP[i-1][1] + v[i].first;
-            }
-        }
-
-        //cout << DP[n_graph-1][0] << " " <<DP[n_graph-1][1] << " "<< n_graph<<"\n";
-        cout << DP[n_graph-1][0]*DP[n_graph-1][1]-M <<"\n";
+    ans /= 2;
+    cout << ans-M;
     }
+
     
     return 0;
 }
